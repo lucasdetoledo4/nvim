@@ -1,41 +1,22 @@
-# Compiled Lua sources
-luac.out
+# Lazy.nvim lock file (optional - uncomment to track plugin versions)
+# lazy-lock.json
 
-# luarocks build files
-*.src.rock
-*.zip
-*.tar.gz
+# Plugin data
+plugin/
 
-# Object files
+# Local/personal settings
+.claude/
+
+# Swap and backup files
+*.swp
+*.swo
+*~
+
+# Compiled files
 *.o
-*.os
-*.ko
-*.obj
-*.elf
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-*.def
-*.exp
-
-# Shared objects (inc. Windows DLLs)
-*.dll
 *.so
-*.so.*
 *.dylib
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
+# OS files
+.DS_Store
+Thumbs.db

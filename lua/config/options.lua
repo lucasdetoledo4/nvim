@@ -34,3 +34,25 @@ vim.opt.clipboard = "unnamedplus"
 -- Split windows
 vim.opt.splitright = true
 vim.opt.splitbelow = true
+
+-- Better completion experience
+vim.opt.completeopt = "menu,menuone,noselect"
+vim.opt.pumheight = 10
+
+-- Better display
+vim.opt.showmode = false
+vim.opt.conceallevel = 0
+
+-- Python provider (disable to improve startup time if not needed)
+vim.g.loaded_python3_provider = 0
+vim.g.loaded_perl_provider = 0
+vim.g.loaded_ruby_provider = 0
+vim.g.loaded_node_provider = 0
+
+-- Update time for better LSP experience
+vim.opt.updatetime = 250
+vim.opt.timeoutlen = 500
+
+-- Better diff algorithm
+vim.opt.diffopt:append("algorithm:patience")
+vim.opt.diffopt:append("indent-heuristic")

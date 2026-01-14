@@ -5,13 +5,24 @@ return {
         lazy = false,
         priority = 1001,
         config = function()
-            vim.g.gruvbox_material_background = "medium"   -- 'soft', 'medium', 'hard'
-            vim.g.gruvbox_material_foreground = "material" -- 'mix', 'original', 'material'
-            vim.g.gruvbox_material_enable_italic = 1       -- enable italics
-            vim.g.gruvbox_material_better_performance = 1  -- improves performance
+            vim.g.gruvbox_material_background = "medium"
+            vim.g.gruvbox_material_foreground = "material"
+            vim.g.gruvbox_material_enable_italic = 1
+            vim.g.gruvbox_material_better_performance = 1
+            vim.g.gruvbox_material_diagnostic_text_highlight = 1
+            vim.g.gruvbox_material_diagnostic_line_highlight = 1
+            vim.g.gruvbox_material_enable_bold = 1
 
-            -- Set as default colorscheme
             vim.cmd.colorscheme("gruvbox-material")
+
+            -- Enhance semantic highlighting for Python
+            vim.api.nvim_set_hl(0, "@lsp.type.class.python", { link = "GruvboxYellow" })
+            vim.api.nvim_set_hl(0, "@lsp.type.decorator.python", { link = "GruvboxAqua" })
+            vim.api.nvim_set_hl(0, "@lsp.type.parameter.python", { link = "GruvboxOrange" })
+            vim.api.nvim_set_hl(0, "@lsp.type.variable.python", { link = "GruvboxFg1" })
+            vim.api.nvim_set_hl(0, "@lsp.type.property.python", { link = "GruvboxBlue" })
+            vim.api.nvim_set_hl(0, "@lsp.type.method.python", { link = "GruvboxGreen" })
+            vim.api.nvim_set_hl(0, "@lsp.type.function.python", { link = "GruvboxGreenBold" })
         end,
     },
 

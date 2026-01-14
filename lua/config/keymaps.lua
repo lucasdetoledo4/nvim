@@ -16,7 +16,7 @@ vim.keymap.set("v", "<A-j>", ":m '>+1<CR>gv=gv", { desc = "Move selection down" 
 vim.keymap.set("v", "<A-k>", ":m '<-2<CR>gv=gv", { desc = "Move selection up" })
 
 -- File operations
-vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save file" })
+vim.keymap.set("n", "<leader>w", "<cmd>w<CR>", { desc = "Save file", silent = true })
 vim.keymap.set("n", "<leader>q", ":q<CR>", { desc = "Quit" })
 vim.keymap.set("n", "<leader>h", ":nohlsearch<CR>", { desc = "Clear search" })
 
@@ -68,3 +68,38 @@ vim.keymap.set("n", "<leader>kt", function()
         vim.cmd.colorscheme("gruvbox-material")
     end
 end, { desc = "Toggle colorscheme" })
+
+-- Folding keymaps (lazy-loaded)
+vim.keymap.set("n", "zR", function() require("ufo").openAllFolds() end, { desc = "Open all folds" })
+vim.keymap.set("n", "zM", function() require("ufo").closeAllFolds() end, { desc = "Close all folds" })
+vim.keymap.set("n", "zr", function() require("ufo").openFoldsExceptKinds() end, { desc = "Fold less" })
+vim.keymap.set("n", "zm", function() require("ufo").closeFoldsWith() end, { desc = "Fold more" })
+vim.keymap.set("n", "zp", function()
+  local winid = require("ufo").peekFoldedLinesUnderCursor()
+  if not winid then
+    vim.lsp.buf.hover()
+  end
+end, { desc = "Peek fold" })
+
+-- Python-specific keymaps
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "python",
+  callback = function()
+    local opts = { buffer = true, silent = true }
+    -- Run current Python file
+    vim.keymap.set("n", "<leader>rr", ":w<CR>:!python %<CR>", vim.tbl_extend("force", opts, { desc = "Run Python file" }))
+    -- Run with uv
+    vim.keymap.set("n", "<leader>ru", ":w<CR>:!uv run python %<CR>", vim.tbl_extend("force", opts, { desc = "Run with uv" }))
+    -- Format with ruff
+    vim.keymap.set("n", "<leader>rf", ":!ruff format %<CR>", vim.tbl_extend("force", opts, { desc = "Format with ruff" }))
+    -- Organize imports
+    vim.keymap.set("n", "<leader>ri", function()
+      vim.lsp.buf.code_action({
+        apply = true,
+        context = {
+          only = { "source.organizeImports" },
+        },
+      })
+    end, vim.tbl_extend("force", opts, { desc = "Organize imports" }))
+  end,
+})

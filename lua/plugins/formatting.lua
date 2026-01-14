@@ -14,28 +14,30 @@ return {
   },
   opts = {
     formatters_by_ft = {
-      python = { "ruff_format" },
+      python = { "ruff_fix", "ruff_format", "ruff_organize_imports" },
       lua = { "stylua" },
-      javascript = { "prettier" },
-      typescript = { "prettier" },
-      javascriptreact = { "prettier" },
-      typescriptreact = { "prettier" },
-      json = { "prettier" },
-      jsonc = { "prettier" },
-      html = { "prettier" },
-      css = { "prettier" },
-      scss = { "prettier" },
       markdown = { "prettier" },
       yaml = { "prettier" },
-      vue = { "prettier" },
-      svelte = { "prettier" },
-      go = { "goimports", "gofumpt" },
+      json = { "prettier" },
       rust = { "rustfmt" },
       toml = { "taplo" },
     },
-    -- Format on save (optional, remove if you don't want this)
+    formatters = {
+      ruff_fix = {
+        command = "ruff",
+        args = { "check", "--fix", "--stdin-filename", "$FILENAME", "-" },
+      },
+      ruff_format = {
+        command = "ruff",
+        args = { "format", "--stdin-filename", "$FILENAME", "-" },
+      },
+      ruff_organize_imports = {
+        command = "ruff",
+        args = { "check", "--select", "I", "--fix", "--stdin-filename", "$FILENAME", "-" },
+      },
+    },
     format_on_save = {
-      timeout_ms = 500,
+      timeout_ms = 1000,
       lsp_fallback = true,
     },
   },

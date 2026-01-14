@@ -84,4 +84,10 @@ return {
       },
     },
   },
+
+  -- Smear Cursor (cursor trail effect)
+  {
+    "sphamba/smear-cursor.nvim",
+    opts = {},
+  },
 }
