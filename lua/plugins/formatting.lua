@@ -21,6 +21,10 @@ return {
       json = { "prettier" },
       rust = { "rustfmt" },
       toml = { "taplo" },
+      typescript = { "prettier" },
+      typescriptreact = { "prettier" },
+      javascript = { "prettier" },
+      javascriptreact = { "prettier" },
     },
     formatters = {
       ruff_fix = {

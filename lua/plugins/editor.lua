@@ -11,11 +11,27 @@ return {
   -- Commenting
   {
     "numToStr/Comment.nvim",
+    keys = {
+      { "gc", mode = { "n", "v" }, desc = "Comment toggle linewise" },
+      { "gb", mode = { "n", "v" }, desc = "Comment toggle blockwise" },
+    },
     dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
     config = function()
       require("Comment").setup({
         pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
       })
+    end,
+  },
+
+  -- Multi-cursor (CMD+D equivalent)
+  {
+    "mg979/vim-visual-multi",
+    branch = "master",
+    init = function()
+      vim.g.VM_maps = {
+        ["Find Under"] = "<C-n>",
+        ["Find Subword Under"] = "<C-n>",
+      }
     end,
   },
 
@@ -66,45 +82,4 @@ return {
     },
   },
 
-  -- Zen Mode
-  {
-    "folke/zen-mode.nvim",
-    cmd = "ZenMode",
-    opts = {
-      window = {
-        width = 150,
-        options = {
-          number = true,
-          relativenumber = true,
-          signcolumn = "yes",
-          cursorline = false,
-        },
-      },
-    },
-    keys = { { "<leader>zz", "<cmd>ZenMode<cr>", desc = "Zen Mode" } },
-  },
-
-  -- Twilight (dims inactive code)
-  {
-    "folke/twilight.nvim",
-    cmd = { "Twilight", "TwilightEnable", "TwilightDisable" },
-    opts = {},
-    keys = { { "<leader>zt", "<cmd>Twilight<cr>", desc = "Toggle Twilight" } },
-  },
-
-  -- Which Key (keybindings popup)
-  {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    opts = {},
-    keys = {
-      {
-        "<leader>?",
-        function()
-          require("which-key").show({ global = false })
-        end,
-        desc = "Buffer Local Keymaps (which-key)",
-      },
-    },
-  },
 }

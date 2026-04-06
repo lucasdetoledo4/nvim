@@ -1,5 +1,6 @@
 return {
   "neovim/nvim-lspconfig",
+  event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
@@ -27,22 +28,31 @@ return {
         vim.keymap.set("n", "<leader>r", vim.lsp.buf.rename, opts)
         vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
 
-        -- Ruff handles linting, basedpyright handles hover
-        if client.name == "ruff" then
+        -- ty handles hover/type checking; ruff and basedpyright should not compete
+        if client.name == "ruff" or client.name == "basedpyright" then
           client.server_capabilities.hoverProvider = false
+        end
+
+        -- basedpyright is only used for semantic tokens; suppress all its diagnostics
+        if client.name == "basedpyright" then
+          local ns = vim.lsp.diagnostic.get_namespace(client.id)
+          vim.diagnostic.enable(false, { bufnr = bufnr, ns_id = ns })
         end
       end,
     })
 
-    -- Find Python venv
-    local function get_python_path()
-      local venv = vim.fn.findfile(".venv/bin/python", ".;")
-      if venv ~= "" then return vim.fn.fnamemodify(venv, ":p") end
-      return nil
-    end
+    -- ty: Astral's Python type checker (not in Mason, install via: uv tool install ty)
+    vim.lsp.config("ty", {
+      capabilities = capabilities,
+      settings = {
+        ty = {},
+      },
+    })
+    vim.lsp.enable("ty")
 
     require("mason-lspconfig").setup({
-      ensure_installed = { "basedpyright", "ruff", "lua_ls", "clangd", "rust_analyzer" },
+      -- Note: rust_analyzer is handled by rustaceanvim plugin
+      ensure_installed = { "ruff", "lua_ls", "clangd", "ts_ls", "basedpyright" },
       automatic_installation = true,
       handlers = {
         -- Default handler
@@ -50,21 +60,19 @@ return {
           require("lspconfig")[server_name].setup({ capabilities = capabilities })
         end,
 
-        -- basedpyright: Python type checking + semantic highlighting
+        -- basedpyright: diagnostics disabled, only used for semantic token colors
+        -- ty handles all type checking; basedpyright provides richer highlights
+        -- until ty gains semantic token support
         ["basedpyright"] = function()
           require("lspconfig").basedpyright.setup({
             capabilities = capabilities,
             settings = {
               basedpyright = {
+                disableOrganizeImports = true,
                 analysis = {
-                  typeCheckingMode = "basic",
-                  autoSearchPaths = true,
-                  useLibraryCodeForTypes = true,
-                  diagnosticMode = "openFilesOnly",
+                  diagnosticMode = "off",
+                  typeCheckingMode = "off",
                 },
-              },
-              python = {
-                pythonPath = get_python_path(),
               },
             },
           })
@@ -88,20 +96,6 @@ return {
                   checkThirdParty = false,
                 },
                 telemetry = { enable = false },
-              },
-            },
-          })
-        end,
-
-        -- Rust
-        ["rust_analyzer"] = function()
-          require("lspconfig").rust_analyzer.setup({
-            capabilities = capabilities,
-            settings = {
-              ["rust-analyzer"] = {
-                check = { command = "clippy" },
-                cargo = { allFeatures = true },
-                procMacro = { enable = true },
               },
             },
           })

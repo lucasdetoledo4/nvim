@@ -1,7 +1,10 @@
 return {
   "nvim-telescope/telescope.nvim",
   branch = "master",
-  dependencies = { "nvim-lua/plenary.nvim" },
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "nvim-telescope/telescope-ui-select.nvim",
+  },
   keys = {
     { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find files" },
     { "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
@@ -27,7 +30,14 @@ return {
           },
         },
       },
+      extensions = {
+        ["ui-select"] = {
+          require("telescope.themes").get_dropdown({}),
+        },
+      },
     })
+
+    telescope.load_extension("ui-select")
 
     -- Search and replace across files
     vim.keymap.set("n", "<leader>sr", function()

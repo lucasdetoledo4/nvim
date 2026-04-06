@@ -90,4 +90,20 @@ return {
     "sphamba/smear-cursor.nvim",
     opts = {},
   },
+
+  -- Which Key (keybindings popup)
+  {
+    "folke/which-key.nvim",
+    event = "VeryLazy",
+    opts = {},
+    keys = {
+      {
+        "<leader>?",
+        function()
+          require("which-key").show({ global = false })
+        end,
+        desc = "Buffer Local Keymaps (which-key)",
+      },
+    },
+  },
 }

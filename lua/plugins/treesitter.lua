@@ -2,7 +2,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter",
     branch = "main",
-    lazy = false,
+    event = { "BufReadPre", "BufNewFile" },
     build = ":TSUpdate",
     config = function()
       require("nvim-treesitter").setup({
@@ -22,6 +22,10 @@ return {
           "c",
           "cpp",
           "rust",
+          "typescript",
+          "tsx",
+          "javascript",
+          "html",
         },
       })
 
@@ -36,7 +40,7 @@ return {
   {
     "nvim-treesitter/nvim-treesitter-textobjects",
     branch = "main",
-    lazy = false,
+    event = { "BufReadPre", "BufNewFile" },
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     config = function()
       require("nvim-treesitter-textobjects").setup({

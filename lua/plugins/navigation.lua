@@ -2,6 +2,7 @@ return {
   -- Smooth Scrolling
   {
     "karb94/neoscroll.nvim",
+    keys = { "<C-u>", "<C-d>", "<C-b>", "<C-f>", "zt", "zz", "zb" },
     config = function()
       require("neoscroll").setup({
         mappings = { "<C-u>", "<C-d>", "<C-b>", "<C-f>", "zt", "zz", "zb" },
@@ -29,38 +30,25 @@ return {
     },
   },
 
-  -- Oil (File Manager)
+  -- Yazi (File Manager)
   {
-    "stevearc/oil.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    config = function()
-      require("oil").setup({
-        default_file_explorer = true,
-        delete_to_trash = true,
-        columns = {
-          "icon",
-          "permissions",
-          "size",
-          "mtime",
-        },
-        view_options = {
-          show_hidden = true,
-        },
-        keymaps = {
-          ["g?"] = "actions.show_help",
-          ["<CR>"] = "actions.select",
-          ["<C-v>"] = "actions.select_vsplit",
-          ["<C-x>"] = "actions.select_split",
-          ["-"] = "actions.parent",
-          ["_"] = "actions.open_cwd",
-          ["`"] = "actions.cd",
-          ["~"] = "actions.tcd",
-          ["gs"] = "actions.change_sort",
-          ["gx"] = "actions.open_external",
-          ["g."] = "actions.toggle_hidden",
-          ["g\\"] = "actions.toggle_trash",
-        },
-      })
+    "mikavilpas/yazi.nvim",
+    event = "VeryLazy",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    keys = {
+      { "<leader>e", "<cmd>Yazi<cr>", desc = "Open yazi at current file" },
+      { "-", "<cmd>Yazi<cr>", desc = "Open yazi at current file" },
+      { "<leader>cw", "<cmd>Yazi cwd<cr>", desc = "Open yazi in working directory" },
+      { "<c-up>", "<cmd>Yazi toggle<cr>", desc = "Resume last yazi session" },
+    },
+    opts = {
+      open_for_directories = true,
+      keymaps = {
+        show_help = "<f1>",
+      },
+    },
+    init = function()
+      vim.g.loaded_netrwPlugin = 1
     end,
   },
 }

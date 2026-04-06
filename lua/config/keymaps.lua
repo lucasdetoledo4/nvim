@@ -31,9 +31,6 @@ vim.keymap.set("n", "<leader>3", ":BufferLineGoToBuffer 3<CR>", { desc = "Go to 
 vim.keymap.set("n", "<leader>4", ":BufferLineGoToBuffer 4<CR>", { desc = "Go to tab 4" })
 vim.keymap.set("n", "<leader>5", ":BufferLineGoToBuffer 5<CR>", { desc = "Go to tab 5" })
 
--- Oil file manager
-vim.keymap.set("n", "<leader>e", "<cmd>Oil<cr>", { desc = "Open file explorer" })
-vim.keymap.set("n", "-", "<cmd>Oil<cr>", { desc = "Open parent directory" })
 
 -- Diagnostics
 vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, { desc = "Show diagnostic" })
@@ -62,12 +59,37 @@ vim.keymap.set("n", "<leader>kt", function()
     local current = vim.g.colors_name
     if current == "gruvbox-material" then
         vim.cmd.colorscheme("vscode")
-    elseif current == "vscode" then
-        vim.cmd.colorscheme("tokyonight-night")
     else
         vim.cmd.colorscheme("gruvbox-material")
     end
 end, { desc = "Toggle colorscheme" })
+
+-- Run Python file raw
+vim.keymap.set("n", "<leader>rr", function()
+  local file = vim.fn.expand("%:p")
+  if not file:match("%.py$") then
+    print("Not a Python file")
+    return
+  end
+  vim.cmd("!python " .. file)
+end, { desc = "Run Python file" })
+
+-- Run Python file with uv as module (handles imports correctly)
+vim.keymap.set("n", "<leader>ru", function()
+  local file = vim.fn.expand("%:p")
+  if not file:match("%.py$") then
+    print("Not a Python file")
+    return
+  end
+  local root = vim.fs.root(0, { "pyproject.toml", ".venv", ".env", "setup.py", ".git" })
+  if not root then
+    vim.cmd("!uv run python " .. file)
+    return
+  end
+  local rel_path = file:sub(#root + 2)
+  local module = rel_path:gsub("%.py$", ""):gsub("/", ".")
+  vim.cmd("!cd " .. root .. " && uv run python -m " .. module)
+end, { desc = "Run Python with uv" })
 
 -- Folding keymaps (lazy-loaded)
 vim.keymap.set("n", "zR", function() require("ufo").openAllFolds() end, { desc = "Open all folds" })
@@ -81,25 +103,3 @@ vim.keymap.set("n", "zp", function()
   end
 end, { desc = "Peek fold" })
 
--- Python-specific keymaps
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "python",
-  callback = function()
-    local opts = { buffer = true, silent = true }
-    -- Run current Python file
-    vim.keymap.set("n", "<leader>rr", ":w<CR>:!python %<CR>", vim.tbl_extend("force", opts, { desc = "Run Python file" }))
-    -- Run with uv
-    vim.keymap.set("n", "<leader>ru", ":w<CR>:!uv run python %<CR>", vim.tbl_extend("force", opts, { desc = "Run with uv" }))
-    -- Format with ruff
-    vim.keymap.set("n", "<leader>rf", ":!ruff format %<CR>", vim.tbl_extend("force", opts, { desc = "Format with ruff" }))
-    -- Organize imports
-    vim.keymap.set("n", "<leader>ri", function()
-      vim.lsp.buf.code_action({
-        apply = true,
-        context = {
-          only = { "source.organizeImports" },
-        },
-      })
-    end, vim.tbl_extend("force", opts, { desc = "Organize imports" }))
-  end,
-})
